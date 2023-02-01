@@ -23,33 +23,28 @@ export class News extends Component {
     return s && s[0].toUpperCase() + s.slice(1);
   }
 
-  fetchMoreData =  async() => {
-    this.setState({ page: this.state.page + 1 })
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ac1a36a3284f469397cdf30c054148c7&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    console.log(parsedData);
-    this.setState({ articles: this.state.articles.concat(parsedData.articles), totalResults: parsedData.totalResults})
-  };
-
   constructor(props) {
     super(props);
     this.state = {
       articles: [],
       loading: true,
       page: 1,
-      totalResults: 0
+      totalResults: 0,
     };
     document.title = `${this.capitalize(this.props.category)} - NewsCaster`;
   }
 
   async updateNews(){
-    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ac1a36a3284f469397cdf30c054148c7&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    this.props.setProgress(0)
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=28260cebe0464bd680a562169f7e0e5f&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true })
     let data = await fetch(url);
+    this.props.setProgress(30)
     let parsedData = await data.json();
-    console.log(parsedData);
+    this.props.setProgress(50)
+    //console.log(parsedData);
     this.setState({ articles: parsedData.articles, totalResults: parsedData.totalResults, loading: false })
+    this.props.setProgress(100)
   }
 
   async componentDidMount() {
@@ -62,13 +57,13 @@ export class News extends Component {
   }
 
   handleNextClick = async () => {
-    this.setState({page: this.state.page - 1})
+    this.setState({page: this.state.page + 1})
     this.updateNews()
   }
 
   fetchMoreData =  async() => {
     this.setState({ page: this.state.page + 1 })
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ac1a36a3284f469397cdf30c054148c7&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=28260cebe0464bd680a562169f7e0e5f&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
