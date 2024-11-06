@@ -3,9 +3,10 @@ import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
 import PropTypes from 'prop-types';
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
+import { api_key } from "../api_keys";
 
-const News = (props)=> {
+const News = (props) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1)
@@ -14,11 +15,10 @@ const News = (props)=> {
   const capitalize = (s) => {
     return s && s[0].toUpperCase() + s.slice(1);
   }
-    
 
-  const updateNews = async()=>{
+  const updateNews = async () => {
     props.setProgress(0);
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=28260cebe0464bd680a562169f7e0e5f&page=${page}&pageSize=${props.pageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${api_key}&page=${page}&pageSize=${props.pageSize}`;
     setLoading(true)
     let data = await fetch(url);
     props.setProgress(30);
@@ -48,9 +48,9 @@ const News = (props)=> {
   //   updateNews()
   // }
 
-  const fetchMoreData =  async() => {
-    let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=28260cebe0464bd680a562169f7e0e5f&page=${page+1}&pageSize=${props.pageSize}`;
-    setPage(page+1)
+  const fetchMoreData = async () => {
+    let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${api_key}&page=${page + 1}&pageSize=${props.pageSize}`;
+    setPage(page + 1)
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
@@ -58,37 +58,37 @@ const News = (props)=> {
     setTotalResults(parsedData.totalResults)
   };
 
-    return (
-      <>
-        <h2 className="text-center" style={{ margin: '35px 0px', marginTop:'90px' }}>NewsCaster - Top {capitalize(props.category)} Headlines</h2>
-        {loading && <Spinner/>}
-        <InfiniteScroll
-          dataLength={articles.length}
-          next={fetchMoreData}
-          hasMore={articles.length !== totalResults}
-          loader={<Spinner/>}
-        >
-          <div className="container">
-            <div className="row">
-              {!loading && articles.map((element) => {
-                return <div className="col-md-4" key={element.url}>
-                  <NewsItem
-                    title={element.title ? element.title : ""}
-                    description={element.description ? element.description : ""}
-                    imageUrl={element.urlToImage}
-                    newsUrl={element.url}
-                    author={element.author}
-                    date={element.publishedAt}
-                    source={element.source.name}
-                  />
-                </div>
-              })}
-            </div>
+  return (
+    <>
+      <h2 className="text-center" style={{ margin: '35px 0px', marginTop: '90px' }}>NewsCaster - Top {capitalize(props.category)} Headlines</h2>
+      {loading && <Spinner />}
+      <InfiniteScroll
+        dataLength={articles.length}
+        next={fetchMoreData}
+        hasMore={articles.length !== totalResults}
+        loader={<Spinner />}
+      >
+        <div className="container">
+          <div className="row">
+            {!loading && articles.map((element) => {
+              return <div className="col-md-4" key={element.url}>
+                <NewsItem
+                  title={element.title ? element.title : ""}
+                  description={element.description ? element.description : ""}
+                  imageUrl={element.urlToImage}
+                  newsUrl={element.url}
+                  author={element.author}
+                  date={element.publishedAt}
+                  source={element.source.name}
+                />
+              </div>
+            })}
           </div>
-        </InfiniteScroll>
-      </>
-    );
-  }
+        </div>
+      </InfiniteScroll>
+    </>
+  );
+}
 
 News.defaultProps = {
   country: 'in',
